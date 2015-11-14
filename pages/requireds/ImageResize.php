@@ -8,7 +8,7 @@
 
 namespace Eventviva;
 
-use \Exception;
+use Exception;
 
 /**
  * PHP class to resize and scale images

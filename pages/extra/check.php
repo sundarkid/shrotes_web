@@ -9,7 +9,7 @@
     <input type="submit" value="upload">
 </form>
 <?php
-use \Eventviva\ImageResize;
+use Eventviva\ImageResize;
 
 if (isset($_FILES['image'])) {
     require 'requireds/ImageResize.php';

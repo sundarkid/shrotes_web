@@ -5,7 +5,7 @@
  * Time: 13:52
  */
 
-$DB = mysqli_connect("localhost", "trydevsi_partner", "part@123", "trydevsi_myschool");
+$DB = mysqli_connect("localhost", "trydevsi_partner", "part@123", "trydevsi_shrotes");
 if (mysqli_connect_errno()) {
     echo "Failed to DB to MySQL: " . mysqli_connect_error();
 }
