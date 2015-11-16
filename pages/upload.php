@@ -57,7 +57,7 @@ switch($ext)
 if(!in_array($ext,$allowed))
     echo "Not Supported formated";
 $upload=0;
-header("Location: http://localhost/myschool/pages/facebook.html");
+header("Location: index.html");
 
 
 

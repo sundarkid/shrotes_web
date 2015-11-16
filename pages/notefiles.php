@@ -1,3 +1,11 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: root
+ * Date: 11/17/15
+ * Time: 12:24 AM
+ */
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,34 +19,25 @@
     <![endif]-->
     <link href="assets/css/facebook.css" rel="stylesheet">
 
-    <!-- Java Script for async checking signup -->
-    <script src="js/ajax.js"></script>
-    <script>
-        function ajax_get_json() {
-            var button_login = document.getElementById("button_signup");
-            var institution = document.getElementById("form-email");
-            var password = document.getElementById("form-password");
-            var hr = ajaxObj("POST", "login.php");
-            hr.onreadystatechange = function () {
-                if (ajaxReturn(hr) == true) {
-                    var data = JSON.parse(hr.responseText);
-                    if (data.result == "success") {
-                        var myWindow = window.open("index.php", "_self");
-                    }
-                    else {
-                        button_login.innerHTML = "Get me in...!";
-                    }
-                }
-            }
-            hr.send("institution=" + institution.value + "&password=" + password.value);
-            button_login.innerHTML = "wait......";
-        }
-        function change_to_register() {
-            var container = document.getElementsByName()
-        }
-    </script>
-    <!-- Java Script for async checking signup -->
+    <!-- Java Script -->
+    <script type="application/javascript">
+        var form = document.getElementById("uploader_form"),
+            button = document.getElementById("upload_button");
 
+        function submitForm() {
+
+            var form = document.getElementById("uploader_form"),
+                button = document.getElementById("upload_button"),
+                file = document.getElementById("file_chooser");
+            if (file.value != "")
+                form.submit();
+            else
+                window.alert("Please choose a file.");
+        }
+
+        button.addEventListener("click", submitForm, false);
+    </script>
+    <!-- end java script -->
 </head>
 
 <body>
@@ -101,7 +100,7 @@
                         <ul class="nav navbar-nav">
                             <li>
                                 <a href="#postModal" role="button" data-toggle="modal"><i
-                                        class="glyphicon glyphicon-plus"></i> Create</a>
+                                        class="glyphicon glyphicon-plus"></i> Upload</a>
                             </li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
@@ -112,6 +111,7 @@
                                     <li><a href="">Checked</a></li>
                                     <li><a href="">Settings</a></li>
                                     <li><a href="">About Us</a></li>
+
                                 </ul>
                             </li>
                         </ul>
@@ -128,52 +128,30 @@
                             <!-- main col left -->
                             <div class="col-sm-12">
 
-
                                 <div class="panel panel-default" style="width: 100%">
+                                    <div class="panel-thumbnail" align="middle"><img src="assets/img/bg_5.jpg"
+                                                                                     class="img-responsive">
+                                    </div>
                                     <div class="panel-body">
-                                        <p class="lead">Subjects</p>
-
-                                        <p>Select a Subject from the list to find the topics</p>
-                                        <?php
-                                        /**
-                                         * Created by PhpStorm.
-                                         * User: root
-                                         * Date: 11/14/15
-                                         * Time: 5:44 PM
-                                         */
-
-                                        require "databaseAndFunctions.php";
-
-                                        $sql = "select * from `category_info` ORDER BY `category_name` ASC ";
-
-                                        $result = mysqli_query($DB, $sql);
-                                        if ($result) {
-                                            while ($row = mysqli_fetch_array($result)) {
-                                                $id = $row['category_id'];
-                                                $name = $row['category_name'];
-                                                $link = "./topics.php/?id=$id";
-
-
-                                                echo <<< t
-
-                                        <form action="topics.php" method="post">
-                                            <input type="hidden" value="$id" name="id">
-                                            <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
-                                        </form>
-t;
-
-                                            }
-
-                                        } else {
-
-                                            echo "<p>No categories available please create one.</p>";
-                                        }
-                                        ?>
-
-                                        <p>
-                                        </p>
+                                        <!-- Add any text details like uploader name later -->
                                     </div>
                                 </div>
+                                <div class="well">
+                                    <form class="form-horizontal" role="form">
+                                        <h4>What's New</h4>
+
+                                        <div class="form-group" style="padding:14px;">
+                                            <textarea class="form-control" placeholder="Update your status"></textarea>
+                                        </div>
+                                        <button class="btn btn-primary pull-right" type="button">Post</button>
+                                        <ul class="list-inline">
+                                            <li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li>
+                                            <li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li>
+                                            <li><a href=""><i class="glyphicon glyphicon-map-marker"></i></a></li>
+                                        </ul>
+                                    </form>
+                                </div>
+
 
                             </div><!--/row-->
 
@@ -195,21 +173,24 @@ t;
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-                    Create Category
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                    Upload a file
                 </div>
                 <div class="modal-body">
-                    <form class="form center-block">
+                    <form id="uploader_form" class="form center-block" method="post" enctype="multipart/form-data"
+                          action="file_upload.php">
                         <div class="form-group">
-                        <textarea class="form-control input-lg" autofocus=""
-                                  placeholder="Name your new Category."></textarea>
+                            <input id="file_chooser" type="file" name="file" value="Select an image" accept="image/*"
+                                   style="background: transparent; ">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <div>
-                        <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true">Create</button>
-                        </ul>
+                        <button id="upload_button" class="btn btn-primary btn-sm" data-dismiss="modal"
+                                aria-hidden="true" onclick="submitForm();">
+                            Upload
+                        </button>
                     </div>
                 </div>
             </div>

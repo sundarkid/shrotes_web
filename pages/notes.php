@@ -102,7 +102,7 @@
 
                                 <div class="panel panel-default" style="width: 100%">
                                     <div class="panel-body">
-                                        <p class="lead">Topic</p>
+                                        <p class="lead">Notes</p>
                                         <?php
                                         /**
                                          * Created by PhpStorm.
@@ -114,16 +114,16 @@
                                         require "databaseAndFunctions.php";
                                         if (isset($_POST['id'])) {
                                             $id = $_POST['id'];
-                                            $sql = "select * from `topic_info` WHERE `category` = '$id' ORDER BY `topic_name` ASC ";
+                                            $sql = "select * from `note_info` WHERE `topic` = '$id' ORDER BY `title` ASC ";
                                             $result = mysqli_query($DB, $sql);
                                             if ($result) {
-                                                echo "<p>Select a topic from the list below.</p>";
+                                                echo "<p>Select a Note from the list below.</p>";
                                                 while ($row = mysqli_fetch_array($result)) {
-                                                    $id = $row['topic_id'];
-                                                    $name = $row['topic_name'];
+                                                    $id = $row['note_id'];
+                                                    $name = $row['title'];
                                                     $link = "./notes.php/?id=$id";
                                                     echo <<< t
-                                        <form action="notes.php" method="post">
+                                        <form action="notefiles.php" method="post">
                                             <input type="hidden" value="$id" name="id">
                                             <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
                                         </form>
@@ -131,19 +131,19 @@ t;
                                                 }
                                             } else {
 
-                                                echo "<p>No topics available please create one.</p>";
+                                                echo "<p>No Notes available please create one.</p>";
                                             }
                                         } else {
-                                            $sql = "select * from `topic_info` ORDER BY `topic_name` ASC ";
+                                            $sql = "select * from `note_info` ORDER BY `title` ASC ";
                                             $result = mysqli_query($DB, $sql);
                                             if ($result) {
-                                                echo "<p>Select any topic from the list below.</p>";
+                                                echo "<p>Select any Note from the list below.</p>";
                                                 while ($row = mysqli_fetch_array($result)) {
-                                                    $id = $row['topic_id'];
-                                                    $name = $row['topic_name'];
+                                                    $id = $row['note_id'];
+                                                    $name = $row['title'];
                                                     $link = "./notes.php/?id=$id";
                                                     echo <<< t
-                                        <form action="notes.php" method="post">
+                                        <form action="notefiles.php" method="post">
                                             <input type="hidden" value="$id" name="id">
                                             <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
                                         </form>
@@ -151,7 +151,7 @@ t;
                                                 }
                                             } else {
 
-                                                echo "<p>No topics available please create one.</p>";
+                                                echo "<p>No Notes available please create one.</p>";
                                             }
                                         }
 
