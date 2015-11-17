@@ -35,7 +35,6 @@
                 window.alert("Please choose a file.");
         }
 
-        button.addEventListener("click", submitForm, false);
     </script>
     <!-- end java script -->
 </head>
@@ -127,29 +126,46 @@
 
                             <!-- main col left -->
                             <div class="col-sm-12">
-
                                 <div class="panel panel-default" style="width: 100%">
-                                    <div class="panel-thumbnail" align="middle"><img src="assets/img/bg_5.jpg"
+                                    <?php
+                                    /**
+                                     * Created by PhpStorm.
+                                     * User: root
+                                     * Date: 11/14/15
+                                     * Time: 6:23 PM
+                                     */
+
+                                    require "databaseAndFunctions.php";
+                                    if (!isset($_POST['id'])) {
+                                        $id = $_POST['id'];
+                                        $sql = "select * from `file_info` ORDER BY `time` ASC ";
+                                        $result = mysqli_query($DB, $sql);
+                                        if ($result) {
+                                            while ($row = mysqli_fetch_array($result)) {
+                                                $name = $row['name'];
+                                                $link = $row['file_link'];
+                                                echo <<< t
+                                    <div class="panel-thumbnail" align="middle"><img src="$link"
                                                                                      class="img-responsive">
                                     </div>
+                                    <br>
+                                    <br>
+t;
+                                            }
+                                        } else {
+
+                                            echo "<p>No topics available please create one.</p>";
+                                        }
+                                    } else {
+                                        header('Location: ' . $_SERVER['HTTP_REFERER']);
+                                    }
+
+                                    ?>
+
+
                                     <div class="panel-body">
                                         <!-- Add any text details like uploader name later -->
                                     </div>
-                                </div>
-                                <div class="well">
-                                    <form class="form-horizontal" role="form">
-                                        <h4>What's New</h4>
-
-                                        <div class="form-group" style="padding:14px;">
-                                            <textarea class="form-control" placeholder="Update your status"></textarea>
-                                        </div>
-                                        <button class="btn btn-primary pull-right" type="button">Post</button>
-                                        <ul class="list-inline">
-                                            <li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li>
-                                            <li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li>
-                                            <li><a href=""><i class="glyphicon glyphicon-map-marker"></i></a></li>
-                                        </ul>
-                                    </form>
                                 </div>
 
 
@@ -178,10 +194,11 @@
                 </div>
                 <div class="modal-body">
                     <form id="uploader_form" class="form center-block" method="post" enctype="multipart/form-data"
-                          action="file_upload.php">
+                          action="upload.php">
                         <div class="form-group">
                             <input id="file_chooser" type="file" name="file" value="Select an image" accept="image/*"
                                    style="background: transparent; ">
+                            <input type="hidden" name="note_id" value="<?php echo $note_id; ?>">
                         </div>
                     </form>
                 </div>
