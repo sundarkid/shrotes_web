@@ -17,35 +17,40 @@ else {
 
     $password = md5($password . $salt);
 
-    $sql = "Select `uname`, `uid`, `mail_id` from `user_details` where `mail_id` = '$email' AND `password` = '$password'";
+    $sql = "Select `name`, `user_id`, `email` from `user_info` where `email` = '$email' AND `password` = '$password'";
+
+
 
     $result = $DB->query($sql);
     if ($result) {
         $row = mysqli_fetch_array($result);
         if ($row != null) {
-            if ($row['mail_id'] === $email) {
+            if ($row['email'] === $email) {
+                session_start();
                 $_SESSION['userId'] = $row['uid'];
                 $_SESSION['userName'] = $row['uname'];
                 $_SESSION['sessionID'] = md5($row['uname']);
-               // echo json_encode(array('result' => "success", 'name' => $row['uname'], 'id' => $row['uid']));
+                // echo json_encode(array('result' => "success", 'name' => $row['uname'], 'id' => $row['uid']));
                 //$_SESSION['login'] = true;
-                header("Location: http://localhost/myschool/pages/facebook.html");
+                header("Location: categories.php");
             }
         } else {
             echo json_encode(array('result' => "failure", 'reason' => "No user match found"));
-            echo <<< t
+    /*        echo <<< t
             <script language="javascript">
-            window.location.href = "login.html";
+            window.location.href = "index.html";
                 </script>
-t;
+
+t;*/    //header('Location: ' . $_SERVER['HTTP_REFERER']);
         }
     } else {
         echo json_encode(array('result' => "failure", 'reason' => "No user match found"));
-        echo <<< t
+  /*      echo <<< t
         <script language="javascript">
-        window.location.href = "login.html";
+        window.location.href = "index.html";
             </script>
-t;
+t;*/
+        //header('Location: ' . $_SERVER['HTTP_REFERER']);
     }
 
     $DB->close();

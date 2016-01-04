@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+
+<?php
+session_start();
+if(!isset($_SESSION['sessionID']))
+    header("Location: logout.php");
+?>
+
 <html lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -10,6 +17,23 @@
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <link href="assets/css/facebook.css" rel="stylesheet">
+    <!-- Java Script -->
+    <script type="application/javascript">
+
+        function submitForm() {
+
+            var form = document.getElementById("uploader_form"),
+                describe = document.getElementById("describe"),
+                insti = document.getElementById("insti"),
+                title = document.getElementById("title");
+            if (title.value != "" || describe.value != "" || insti.value != "")
+                form.submit();
+            else
+                window.alert("Please enter name, institution and description.");
+        }
+
+    </script>
+    <!-- end java script -->
 </head>
 
 <body>
@@ -80,9 +104,7 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
                                         class="glyphicon glyphicon-user"></i></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="">Checked</a></li>
-                                    <li><a href="">Settings</a></li>
-                                    <li><a href="">About Us</a></li>
+                                    <li><a href="logout.php">Logout</a></li>
 
                                 </ul>
                             </li>
@@ -112,8 +134,13 @@
                                          */
 
                                         require "databaseAndFunctions.php";
-                                        if (isset($_POST['id'])) {
-                                            $id = $_POST['id'];
+                                        if (isset($_POST['cat_id']) || isset($_SESSION['last_post']['cat_id'])) {
+                                            if (isset($_POST['cat_id'])){
+                                                $_SESSION['last_post'] = $_POST;
+                                                $id = $_SESSION['last_post']['cat_id'];}
+                                            else{
+                                                $id = $_SESSION['last_post']['cat_id'];
+                                            }
                                             $sql = "select * from `topic_info` WHERE `category` = '$id' ORDER BY `topic_name` ASC ";
                                             $result = mysqli_query($DB, $sql);
                                             if ($result) {
@@ -124,7 +151,7 @@
                                                     $link = "./notes.php/?id=$id";
                                                     echo <<< t
                                         <form action="notes.php" method="post">
-                                            <input type="hidden" value="$id" name="id">
+                                            <input type="hidden" value="$id" name="topic_id">
                                             <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
                                         </form>
 t;
@@ -144,7 +171,7 @@ t;
                                                     $link = "./notes.php/?id=$id";
                                                     echo <<< t
                                         <form action="notes.php" method="post">
-                                            <input type="hidden" value="$id" name="id">
+                                            <input type="hidden" value="$id" name="topic_id">
                                             <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
                                         </form>
 t;
@@ -184,25 +211,32 @@ t;
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">�</button>
-                Update Status
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                Create topic
             </div>
             <div class="modal-body">
-                <form class="form center-block">
+                <form class="form center-block" id="uploader_form" method="post" action="createTopic.php">
                     <div class="form-group">
-                        <textarea class="form-control input-lg" autofocus=""
-                                  placeholder="What do you want to share?"></textarea>
+                        <textarea name="name" id="title" class="form-control input-lg" autofocus=""
+                                  placeholder="Name your topic."></textarea>
+                        <textarea name="description" id="describe" class="form-control input-lg" autofocus=""
+                                  placeholder="Describe about the title."></textarea>
+                        <textarea name="institution" id="insti" class="form-control input-lg" autofocus=""
+                                  placeholder="Your institution name."></textarea>
+                        <input type="hidden" name="cat_id" value="<?php
+                        if (isset($_POST['cat_id']))
+                            echo $_POST['cat_id'];
+                        else if (isset($_SESSION['last_post']['cat_id']))
+                            echo $_SESSION['last_post']['cat_id'];
+                        else
+                            echo 0;
+                        ?>">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <div>
-                    <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true">Create</button>
-                    <ul class="pull-left list-inline">
-                        <li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li>
-                        <li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li>
-                        <li><a href=""><i class="glyphicon glyphicon-map-marker"></i></a></li>
-                    </ul>
+                    <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true" onclick="submitForm();">Create</button>
                 </div>
             </div>
         </div>

@@ -35,6 +35,8 @@ switch($ext)
             if ($result) {
                 echo "File Uploaded";
                 header('Location: ' . $_SERVER['HTTP_REFERER']);
+            }else{
+                echo "not uploaded";
             }
         }break;
 
@@ -69,7 +71,9 @@ switch($ext)
 
 if (!in_array($ext, $allowed)) {
     echo "Not Supported formated";
-    header('Location: ' . $_SERVER['HTTP_REFERER']);
+    //session_start();
+    //echo json_encode($_SESSION['last_post']);
+    //header('Location: ' . $_SERVER['HTTP_REFERER']);
 }
 $upload=0;
 //header("Location: index.html");

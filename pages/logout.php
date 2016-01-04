@@ -9,5 +9,5 @@ session_start();
 session_unset();
 session_destroy();
 //$_SESSION['login'] = false;
-header("Location: http://localhost/myschool/pages/index.html");
+header("Location: index.html");
 ?>

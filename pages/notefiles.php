@@ -5,6 +5,10 @@
  * Date: 11/17/15
  * Time: 12:24 AM
  */
+
+session_start();
+if(!isset($_SESSION['sessionID']))
+    header("Location: logout.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,6 +52,7 @@
             <!-- sidebar -->
             <div class="column col-sm-2 col-xs-1 sidebar-offcanvas" id="sidebar">
 
+
                 <ul class="nav">
                     <li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i
                                 class="glyphicon glyphicon-chevron-right"></i></a></li>
@@ -61,9 +66,9 @@
 
                 <!-- tiny only nav-->
                 <ul class="nav visible-xs" id="xs-menu">
-                    <li><a href="#featured" class="text-center"><i class="glyphicon glyphicon-list-alt"></i></a></li>
-                    <li><a href="#stories" class="text-center"><i class="glyphicon glyphicon-list"></i></a></li>
-                    <li><a href="#" class="text-center"><i class="glyphicon glyphicon-refresh"></i></a></li>
+                    <li><a href="categories.php" class="text-center"><i class="glyphicon glyphicon-list"></i></a></li>
+                    <li><a href="topics.php" class="text-center"><i class="glyphicon glyphicon-list"></i></a></li>
+                    <li><a href="notes.php" class="text-center"><i class="glyphicon glyphicon-list"></i></a></li>
                 </ul>
 
             </div>
@@ -107,9 +112,7 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
                                         class="glyphicon glyphicon-user"></i></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="">Checked</a></li>
-                                    <li><a href="">Settings</a></li>
-                                    <li><a href="">About Us</a></li>
+                                    <li><a href="logout.php">logout</a></li>
 
                                 </ul>
                             </li>
@@ -126,47 +129,67 @@
 
                             <!-- main col left -->
                             <div class="col-sm-12">
-                                <div class="panel panel-default" style="width: 100%">
-                                    <?php
-                                    /**
-                                     * Created by PhpStorm.
-                                     * User: root
-                                     * Date: 11/14/15
-                                     * Time: 6:23 PM
-                                     */
+                                <?php
+                                /**
+                                 * Created by PhpStorm.
+                                 * User: root
+                                 * Date: 11/14/15
+                                 * Time: 6:23 PM
+                                 * Time: 6:23 PM
+                                 */
 
-                                    require "databaseAndFunctions.php";
-                                    if (!isset($_POST['id'])) {
-                                        $id = $_POST['id'];
-                                        $sql = "select * from `file_info` ORDER BY `time` ASC ";
-                                        $result = mysqli_query($DB, $sql);
-                                        if ($result) {
-                                            while ($row = mysqli_fetch_array($result)) {
-                                                $name = $row['name'];
-                                                $link = $row['file_link'];
-                                                echo <<< t
+                                require "databaseAndFunctions.php";
+
+                                session_start();
+
+                                if (isset($_POST['note_id']) || isset($_SESSION['last_post']['note_id'])) {
+                                    if (isset($_POST['note_id'])){
+                                        $_SESSION['last_post'] = $_POST;
+                                        $id = $_SESSION['last_post']['note_id'];}
+                                    else{
+                                        $id = $_SESSION['last_post']['note_id'];
+                                    }
+                                    $sql = "select * from `file_info` WHERE `note_id` = '$id' ORDER BY `time` ASC ";
+                                    $result = mysqli_query($DB, $sql);
+                                    if ($result) {
+                                        while ($row = mysqli_fetch_array($result)) {
+                                            $name = $id . "_" . $row['file_id'];
+                                            $link = $row['file_link'];
+
+                                            echo <<< t
+                                <div class="panel panel-default" style="width: 100%">
                                     <div class="panel-thumbnail" align="middle"><img src="$link"
                                                                                      class="img-responsive">
                                     </div>
-                                    <br>
-                                    <br>
-t;
-                                            }
-                                        } else {
-
-                                            echo "<p>No topics available please create one.</p>";
-                                        }
-                                    } else {
-                                        header('Location: ' . $_SERVER['HTTP_REFERER']);
-                                    }
-
-                                    ?>
-
-
                                     <div class="panel-body">
                                         <!-- Add any text details like uploader name later -->
+                                        <a href="$link" download="$name">Click to download the image</a>
                                     </div>
                                 </div>
+t;
+                                        }
+                                    } else {
+                                        echo <<< t
+                                <div class="panel panel-default" style="width: 100%">
+                                    <div class="panel-body">
+                                        <!-- Add any text details like uploader name later -->
+                                        <p>No files available do upload.</p>
+                                    </div>
+                                </div>
+t;
+                                    }
+                                } else {
+                                    echo <<< t
+                                <div class="panel panel-default" style="width: 100%">
+                                    <div class="panel-body">
+                                        <!-- Add any text details like uploader name later -->
+                                        <p>No files available do upload.</p>
+                                    </div>
+                                </div>
+t;
+                                }
+
+                                ?>
 
 
                             </div><!--/row-->
@@ -193,14 +216,24 @@ t;
                     Upload a file
                 </div>
                 <div class="modal-body">
+                    <!-- Form for uploading file -->
                     <form id="uploader_form" class="form center-block" method="post" enctype="multipart/form-data"
                           action="upload.php">
                         <div class="form-group">
-                            <input id="file_chooser" type="file" name="file" value="Select an image" accept="image/*"
+                            <input id="file_chooser" type="file" name="file" value="Select an image"
+                                   accept="image/JPG, image/jpg, image/jpeg, image/JPEG, image/png, image/PNG"
                                    style="background: transparent; ">
-                            <input type="hidden" name="note_id" value="<?php echo $note_id; ?>">
+                            <input type="hidden" name="note_id"
+                                   value="<?php
+                                   if (isset($_POST['note_id']))
+                                       echo $_POST['note_id'];
+                                   else if (isset($_SESSION['last_post']['note_id']))
+                                       echo $_SESSION['last_post']['note_id'];
+                                   else
+                                       echo 0; ?>">
                         </div>
                     </form>
+                    <!-- END Form for uploading file -->
                 </div>
                 <div class="modal-footer">
                     <div>

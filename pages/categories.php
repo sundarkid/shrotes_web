@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+
+<?php
+session_start();
+if(!isset($_SESSION['sessionID']))
+    header("Location: logout.php");
+?>
 <html lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -11,33 +17,23 @@
     <![endif]-->
     <link href="assets/css/facebook.css" rel="stylesheet">
 
-    <!-- Java Script for async checking signup -->
-    <script src="js/ajax.js"></script>
-    <script>
-        function ajax_get_json() {
-            var button_login = document.getElementById("button_signup");
-            var institution = document.getElementById("form-email");
-            var password = document.getElementById("form-password");
-            var hr = ajaxObj("POST", "login.php");
-            hr.onreadystatechange = function () {
-                if (ajaxReturn(hr) == true) {
-                    var data = JSON.parse(hr.responseText);
-                    if (data.result == "success") {
-                        var myWindow = window.open("index.php", "_self");
-                    }
-                    else {
-                        button_login.innerHTML = "Get me in...!";
-                    }
-                }
-            }
-            hr.send("institution=" + institution.value + "&password=" + password.value);
-            button_login.innerHTML = "wait......";
+    <!-- Java Script -->
+    <script type="application/javascript">
+
+        function submitForm() {
+
+            var form = document.getElementById("uploader_form"),
+                describe = document.getElementById("describe"),
+                insti = document.getElementById("insti"),
+                title = document.getElementById("title");
+            if (title.value != "" || describe.value != "" || insti.value != "")
+                form.submit();
+            else
+                window.alert("Please enter name, institution and description.");
         }
-        function change_to_register() {
-            var container = document.getElementsByName()
-        }
+
     </script>
-    <!-- Java Script for async checking signup -->
+    <!-- end java script -->
 
 </head>
 
@@ -63,9 +59,9 @@
 
                 <!-- tiny only nav-->
                 <ul class="nav visible-xs" id="xs-menu">
-                    <li><a href="#featured" class="text-center"><i class="glyphicon glyphicon-list-alt"></i></a></li>
-                    <li><a href="#stories" class="text-center"><i class="glyphicon glyphicon-list"></i></a></li>
-                    <li><a href="#" class="text-center"><i class="glyphicon glyphicon-refresh"></i></a></li>
+                    <li><a href="categories.php" class="text-center"><i class="glyphicon glyphicon-list"></i></a></li>
+                    <li><a href="topics.php" class="text-center"><i class="glyphicon glyphicon-list"></i></a></li>
+                    <li><a href="notes.php" class="text-center"><i class="glyphicon glyphicon-list"></i></a></li>
                 </ul>
 
             </div>
@@ -87,7 +83,7 @@
                         <a href="http://usebootstrap.com/theme/facebook" class="navbar-brand logo">b</a>
                     </div>
                     <nav class="collapse navbar-collapse" role="navigation">
-                        <form class="navbar-form navbar-left">
+                        <form class="navbar-form navbar-left" action="" method="get">
                             <div class="input-group input-group-sm" style="max-width:500px;">
                                 <input class="form-control" placeholder="Search" name="srch-term" id="srch-term"
                                        type="text">
@@ -109,9 +105,7 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
                                         class="glyphicon glyphicon-user"></i></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="">Checked</a></li>
-                                    <li><a href="">Settings</a></li>
-                                    <li><a href="">About Us</a></li>
+                                    <li><a href="logout.php">Logout</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -143,30 +137,55 @@
                                          */
 
                                         require "databaseAndFunctions.php";
+                                        
+                                        if(!isset($_GET['srch-term'])){
+                                            $sql = "select * from `category_info` ORDER BY `category_name` ASC ";
 
-                                        $sql = "select * from `category_info` ORDER BY `category_name` ASC ";
-
-                                        $result = mysqli_query($DB, $sql);
-                                        if ($result) {
-                                            while ($row = mysqli_fetch_array($result)) {
-                                                $id = $row['category_id'];
-                                                $name = $row['category_name'];
-                                                $link = "./topics.php/?id=$id";
+                                            $result = mysqli_query($DB, $sql);
+                                            if ($result) {
+                                                while ($row = mysqli_fetch_array($result)) {
+                                                    $id = $row['category_id'];
+                                                    $name = $row['category_name'];
+                                                    $link = "./topics.php?cat_id=$id";
 
 
-                                                echo <<< t
+                                                    echo <<< t
 
-                                        <form action="topics.php" method="post">
-                                            <input type="hidden" value="$id" name="id">
-                                            <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
-                                        </form>
+                                            <form action="topics.php" method="post">
+                                                <input type="hidden" value="$id" name="cat_id">
+                                                <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
+                                            </form>
 t;
 
+                                                }
+
+                                            } else {
+
+                                                echo "<p>No categories available please create one.</p>";
                                             }
+                                        }else{
+                                            $sql = "select * from `category_info` where `category_name` like  '%".$_GET['srch-term']."%' or `description` like '%".$_GET['srch-term']."%' ORDER BY `category_name` ASC";
 
-                                        } else {
+                                            $result = mysqli_query($DB, $sql);
+                                            if ($result) {
+                                                while ($row = mysqli_fetch_array($result)) {
+                                                    $id = $row['category_id'];
+                                                    $name = $row['category_name'];
+                                                    $link = "./topics.php?cat_id=$id";
 
-                                            echo "<p>No categories available please create one.</p>";
+
+                                                    echo <<< t
+
+                                            <form action="topics.php" method="post">
+                                                <input type="hidden" value="$id" name="cat_id">
+                                                <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
+                                            </form>
+t;
+
+                                                }
+                                            } else {
+                                                echo "<p>No categories available please create one.</p>";
+                                            }
                                         }
                                         ?>
 
@@ -199,16 +218,21 @@ t;
                     Create Category
                 </div>
                 <div class="modal-body">
-                    <form class="form center-block">
+                    <form class="form center-block" id="uploader_form" method="post" action="createCategory.php">
                         <div class="form-group">
-                        <textarea class="form-control input-lg" autofocus=""
-                                  placeholder="Name your new Category."></textarea>
+                        <textarea name="name" id="title" class="form-control input-lg" autofocus=""
+                                  placeholder="Name your category."></textarea>
+                        <textarea name="description" id="describe" class="form-control input-lg" autofocus=""
+                                  placeholder="Describe about it."></textarea>
+                        <textarea name="institution" id="insti" class="form-control input-lg" autofocus=""
+                                  placeholder="Your institution name."></textarea>
                         </div>
+                    </form>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <div>
-                        <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true">Create</button>
+                        <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true" onclick="submitForm();">Create</button>
                         </ul>
                     </div>
                 </div>
