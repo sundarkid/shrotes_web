@@ -39,41 +39,85 @@ switch($ext)
                 echo "not uploaded";
             }
         }break;
-
+	case 'pptx':
     case 'ppt':
         $target_dir = "data/ppt/";
         $target_file = $target_dir . basename($_FILES["file"]["name"]);
         if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
             echo "The file ". basename( $_FILES["file"]["name"]). " has been uploaded.";
+	        $link = $target_file;
+	        $filename = $_FILES['file']['name'];
+	        $sql = "insert into `file_info` (`note_id`, `name`, `file_link`) VALUES ('$note_id','$filename', '$link' )";
+	        $result = mysqli_query($DB, $sql);
+	        if ($result) {
+		        echo "File Uploaded";
+		        header('Location: ' . $_SERVER['HTTP_REFERER']);
+	        }else{
+		        echo "not uploaded";
+	        }
         }break;
     case 'doc':
+    case 'dox':
         $target_dir = "data/doc/";
         $target_file = $target_dir . basename($_FILES["file"]["name"]);
         if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
             echo "The file ". basename( $_FILES["file"]["name"]). " has been uploaded.";
+	        $link = $target_file;
+	        $filename = $_FILES['file']['name'];
+	        $sql = "insert into `file_info` (`note_id`, `name`, `file_link`) VALUES ('$note_id','$filename', '$link' )";
+	        $result = mysqli_query($DB, $sql);
+	        if ($result) {
+		        echo "File Uploaded";
+		        header('Location: ' . $_SERVER['HTTP_REFERER']);
+	        }else{
+		        echo "not uploaded";
+	        }
         }break;
-    case 'pptx':
-        $target_dir = "data/ppt/";
-        $target_file = $target_dir . basename($_FILES["file"]["name"]);
-        if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
-            echo "The file ". basename( $_FILES["file"]["name"]). " has been uploaded.";
-        }break;
+
     case 'txt':
         $target_dir = "data/text/";
         $target_file = $target_dir . basename($_FILES["file"]["name"]);
         if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
             echo "The file ". basename( $_FILES["file"]["name"]). " has been uploaded.";
+	        $link = $target_file;
+	        $filename = $_FILES['file']['name'];
+	        $sql = "insert into `file_info` (`note_id`, `name`, `file_link`) VALUES ('$note_id','$filename', '$link' )";
+	        $result = mysqli_query($DB, $sql);
+	        if ($result) {
+		        echo "File Uploaded";
+		        header('Location: ' . $_SERVER['HTTP_REFERER']);
+	        }else{
+		        echo "not uploaded";
+	        }
         }
         break;
+
+	default:
+		$target_dir = "data/";
+		$target_file = $target_dir . basename($_FILES["file"]["name"]);
+		if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
+			echo "The file ". basename( $_FILES["file"]["name"]). " has been uploaded.";
+			$link = $target_file;
+			$filename = $_FILES['file']['name'];
+			$sql = "insert into `file_info` (`note_id`, `name`, `file_link`) VALUES ('$note_id','$filename', '$link' )";
+			$result = mysqli_query($DB, $sql);
+			if ($result) {
+				echo "File Uploaded";
+				header('Location: ' . $_SERVER['HTTP_REFERER']);
+			}else{
+				echo "not uploaded";
+			}
+		}
+		break;
 
 
 }
 
 if (!in_array($ext, $allowed)) {
     echo "Not Supported formated";
-    //session_start();
-    //echo json_encode($_SESSION['last_post']);
-    //header('Location: ' . $_SERVER['HTTP_REFERER']);
+    session_start();
+    echo json_encode($_SESSION['last_post']);
+//    header('Location: ' . $_SERVER['HTTP_REFERER']);
 }
 $upload=0;
 //header("Location: index.html");

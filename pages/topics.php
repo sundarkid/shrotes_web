@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <?php
+require_once 'commons.php';
 session_start();
 if(!isset($_SESSION['sessionID']))
     header("Location: logout.php");
@@ -79,7 +80,7 @@ if(!isset($_SESSION['sessionID']))
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a href="http://usebootstrap.com/theme/facebook" class="navbar-brand logo">b</a>
+                        <a href="categories.php" class="navbar-brand logo">b</a>
                     </div>
                     <nav class="collapse navbar-collapse" role="navigation">
                         <form class="navbar-form navbar-left">

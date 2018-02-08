@@ -6,6 +6,7 @@
  * Time: 1:21 PM
  */
 
+require_once 'commons.php';
 require "databaseAndFunctions.php";
 
 if(isset($_POST['topic_id']) && isset($_POST['title']) && isset($_POST['description'])){

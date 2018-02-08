@@ -23,6 +23,7 @@ foreach ($data as $key => $value) {
             break;
         case "password":
             $password = md5($value . $salt);
+            echo $password;
             break;
         case "email":
             $email = $value;
@@ -44,7 +45,7 @@ if ($validater) {
 
     if ($result) {
         echo json_encode(array('result' => "success"));
-        header("Location: http://localhost/shrotes/index.html");
+        header("Location: http://localhost/shrotes_web/index.html");
     } else {
         echo json_encode(array('result' => "failure", 'reason' => "Cannot register person"));
     }

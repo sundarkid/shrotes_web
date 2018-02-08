@@ -5,7 +5,7 @@
  * Time: 13:52
  */
 
-$DB = mysqli_connect("localhost", "trydevsi_partner", "part@123", "trydevsi_shrotes");
+$DB = mysqli_connect("localhost", "shrotes", "shrote@123", "shrotes");
 if (mysqli_connect_errno()) {
     echo "Failed to DB to MySQL: " . mysqli_connect_error();
 }
@@ -13,7 +13,7 @@ if (mysqli_connect_errno()) {
 $domain = "http://myschool.askyourfriend.in/";
 $salt = "fidhbfn9J((jPCinISNOkinknvapin0f9fnoXVnVP0EINFqnalcap0mc-MC0MSPD0qej";
 
-session_start();
+//session_start();
 
 $isLoggedIn = isset($_SESSION['sessionID']);
 

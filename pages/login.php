@@ -14,10 +14,10 @@ else {
 
     $email = $DB->real_escape_string($email);
     $password = $DB->real_escape_string($password);
-
+	echo $password;
     $password = md5($password . $salt);
-
-    $sql = "Select `name`, `user_id`, `email` from `user_info` where `email` = '$email' AND `password` = '$password'";
+	echo $password;
+    $sql = "Select `name`, `uid`, `email` from `user_info` where `email` = '$email' AND `password` = '$password'";
 
 
 

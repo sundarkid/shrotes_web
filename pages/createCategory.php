@@ -6,6 +6,7 @@
  * Time: 11:13 AM
  */
 
+require_once 'commons.php';
 require "databaseAndFunctions.php";
 
 if(isset($_POST['name']) && isset($_POST['description']) && isset($_POST['institution'])){

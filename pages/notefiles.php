@@ -5,10 +5,11 @@
  * Date: 11/17/15
  * Time: 12:24 AM
  */
-
+require_once 'commons.php';
 session_start();
-if(!isset($_SESSION['sessionID']))
-    header("Location: logout.php");
+if ( ! isset( $_SESSION['sessionID'] ) ) {
+	header( "Location: logout.php" );
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -55,7 +56,7 @@ if(!isset($_SESSION['sessionID']))
 
                 <ul class="nav">
                     <li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i
-                                class="glyphicon glyphicon-chevron-right"></i></a></li>
+                                    class="glyphicon glyphicon-chevron-right"></i></a></li>
                 </ul>
 
                 <ul class="nav hidden-xs" id="lg-menu">
@@ -97,20 +98,20 @@ if(!isset($_SESSION['sessionID']))
 
                                 <div class="input-group-btn">
                                     <button class="btn btn-default" type="submit"><i
-                                            class="glyphicon glyphicon-search"></i></button>
+                                                class="glyphicon glyphicon-search"></i></button>
                                 </div>
                             </div>
                         </form>
                         <ul class="nav navbar-nav">
                             <li>
                                 <a href="#postModal" role="button" data-toggle="modal"><i
-                                        class="glyphicon glyphicon-plus"></i> Upload</a>
+                                            class="glyphicon glyphicon-plus"></i> Upload</a>
                             </li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
-                                        class="glyphicon glyphicon-user"></i></a>
+                                            class="glyphicon glyphicon-user"></i></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="logout.php">logout</a></li>
 
@@ -129,47 +130,49 @@ if(!isset($_SESSION['sessionID']))
 
                             <!-- main col left -->
                             <div class="col-sm-12">
-                                <?php
-                                /**
-                                 * Created by PhpStorm.
-                                 * User: root
-                                 * Date: 11/14/15
-                                 * Time: 6:23 PM
-                                 * Time: 6:23 PM
-                                 */
+								<?php
+								/**
+								 * Created by PhpStorm.
+								 * User: root
+								 * Date: 11/14/15
+								 * Time: 6:23 PM
+								 * Time: 6:23 PM
+								 */
 
-                                require "databaseAndFunctions.php";
+								require "databaseAndFunctions.php";
 
-                                session_start();
+								session_start();
 
-                                if (isset($_POST['note_id']) || isset($_SESSION['last_post']['note_id'])) {
-                                    if (isset($_POST['note_id'])){
-                                        $_SESSION['last_post'] = $_POST;
-                                        $id = $_SESSION['last_post']['note_id'];}
-                                    else{
-                                        $id = $_SESSION['last_post']['note_id'];
-                                    }
-                                    $sql = "select * from `file_info` WHERE `note_id` = '$id' ORDER BY `time` ASC ";
-                                    $result = mysqli_query($DB, $sql);
-                                    if ($result) {
-                                        while ($row = mysqli_fetch_array($result)) {
-                                            $name = $id . "_" . $row['file_id'];
-                                            $link = $row['file_link'];
+								if ( isset( $_POST['note_id'] ) || isset( $_SESSION['last_post']['note_id'] ) ) {
+									if ( isset( $_POST['note_id'] ) ) {
+										$_SESSION['last_post'] = $_POST;
+										$id                    = $_SESSION['last_post']['note_id'];
+									} else {
+										$id = $_SESSION['last_post']['note_id'];
+									}
+									$sql    = "select * from `file_info` WHERE `note_id` = '$id' ORDER BY `time` ASC ";
+									$result = mysqli_query( $DB, $sql );
+									if ( $result ) {
+										while ( $row = mysqli_fetch_array( $result ) ) {
+											$name      = $id . "_" . $row['file_id'] . "_" . $row['name'];
+											$file_name = $row['name'];
+											$link      = $row['file_link'];
 
-                                            echo <<< t
-                                <div class="panel panel-default" style="width: 100%">
+											echo <<< t
+                                <div class="panel panel-default text-center" style="width: 100%">
+                                    <h3 class="h3">$file_name</h3>
                                     <div class="panel-thumbnail" align="middle"><img src="$link"
                                                                                      class="img-responsive">
                                     </div>
-                                    <div class="panel-body">
+                                    <div>
                                         <!-- Add any text details like uploader name later -->
-                                        <a href="$link" download="$name">Click to download the image</a>
+                                        <a href="$link" download="$name">Click to download the file</a>
                                     </div>
                                 </div>
 t;
-                                        }
-                                    } else {
-                                        echo <<< t
+										}
+									} else {
+										echo <<< t
                                 <div class="panel panel-default" style="width: 100%">
                                     <div class="panel-body">
                                         <!-- Add any text details like uploader name later -->
@@ -177,9 +180,9 @@ t;
                                     </div>
                                 </div>
 t;
-                                    }
-                                } else {
-                                    echo <<< t
+									}
+								} else {
+									echo <<< t
                                 <div class="panel panel-default" style="width: 100%">
                                     <div class="panel-body">
                                         <!-- Add any text details like uploader name later -->
@@ -187,9 +190,9 @@ t;
                                     </div>
                                 </div>
 t;
-                                }
+								}
 
-                                ?>
+								?>
 
 
                             </div><!--/row-->
@@ -221,16 +224,17 @@ t;
                           action="upload.php">
                         <div class="form-group">
                             <input id="file_chooser" type="file" name="file" value="Select an image"
-                                   accept="image/JPG, image/jpg, image/jpeg, image/JPEG, image/png, image/PNG"
+                                   accept="*/*"
                                    style="background: transparent; ">
                             <input type="hidden" name="note_id"
                                    value="<?php
-                                   if (isset($_POST['note_id']))
-                                       echo $_POST['note_id'];
-                                   else if (isset($_SESSION['last_post']['note_id']))
-                                       echo $_SESSION['last_post']['note_id'];
-                                   else
-                                       echo 0; ?>">
+							       if ( isset( $_POST['note_id'] ) ) {
+								       echo $_POST['note_id'];
+							       } else if ( isset( $_SESSION['last_post']['note_id'] ) ) {
+								       echo $_SESSION['last_post']['note_id'];
+							       } else {
+								       echo 0;
+							       } ?>">
                         </div>
                     </form>
                     <!-- END Form for uploading file -->

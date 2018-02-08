@@ -6,6 +6,7 @@
  * Time: 1:46 PM
  */
 
+require_once 'commons.php';
 
 require "databaseAndFunctions.php";
 
