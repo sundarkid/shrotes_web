@@ -45,7 +45,7 @@ if ($validater) {
 
     if ($result) {
         echo json_encode(array('result' => "success"));
-        header("Location: http://localhost/shrotes_web/index.html");
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
     } else {
         echo json_encode(array('result' => "failure", 'reason' => "Cannot register person"));
     }
