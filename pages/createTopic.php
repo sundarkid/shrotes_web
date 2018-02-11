@@ -6,9 +6,8 @@
  * Time: 1:46 PM
  */
 
-require_once 'commons.php';
-
 require "databaseAndFunctions.php";
+require_once 'commons.php';
 
 if(isset($_POST['cat_id']) && isset($_POST['name']) && isset($_POST['description']) && isset($_POST['institution'])){
 
@@ -17,7 +16,7 @@ if(isset($_POST['cat_id']) && isset($_POST['name']) && isset($_POST['description
     $desc = $_POST['description'];
     $cid = $_POST['cat_id'];
 
-    $sql = "INSERT INTO `topic_info`( `topic_name`, `institution`, `description`, `category`) VALUES ('$title','$inst','$desc','$cid')";
+    $sql = "INSERT INTO `topic_info`( `topic_name`, `institution`, `description`, `category`, `user_id`) VALUES ('$title','$inst','$desc','$cid', '$user_id')";
     $result = mysqli_query($DB,$sql);
     if($result){
         echo 'created successfully';

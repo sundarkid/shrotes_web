@@ -5,8 +5,8 @@
  * Date: 11/17/15
  * Time: 12:24 AM
  */
-require_once 'commons.php';
 session_start();
+require_once 'commons.php';
 if ( ! isset( $_SESSION['sessionID'] ) ) {
 	header( "Location: logout.php" );
 }
@@ -141,16 +141,49 @@ if ( ! isset( $_SESSION['sessionID'] ) ) {
 
 								require "databaseAndFunctions.php";
 
-								session_start();
+								if ( ! isset( $_GET['srch-term'] ) ) {
+									if ( isset( $_POST['note_id'] ) || isset( $_SESSION['last_post']['note_id'] ) ) {
+										if ( isset( $_POST['note_id'] ) ) {
+											$_SESSION['last_post'] = $_POST;
+											$id                    = $_SESSION['last_post']['note_id'];
+										} else {
+											$id = $_SESSION['last_post']['note_id'];
+										}
+										$sql    = "select * from `file_info` WHERE `note_id` = '$id' AND `user_id` = '$user_id' ORDER BY `time` ASC ";
+										$result = mysqli_query( $DB, $sql );
+										if ( $result ) {
+											while ( $row = mysqli_fetch_array( $result ) ) {
+												$name      = $id . "_" . $row['file_id'] . "_" . $row['name'];
+												$file_name = $row['name'];
+												$link      = $row['file_link'];
 
-								if ( isset( $_POST['note_id'] ) || isset( $_SESSION['last_post']['note_id'] ) ) {
-									if ( isset( $_POST['note_id'] ) ) {
-										$_SESSION['last_post'] = $_POST;
-										$id                    = $_SESSION['last_post']['note_id'];
-									} else {
-										$id = $_SESSION['last_post']['note_id'];
+												echo <<< t
+                                <div class="panel panel-default text-center" style="width: 100%">
+                                    <h3 class="h3">$file_name</h3>
+                                    <div class="panel-thumbnail" align="middle"><img src="$link"
+                                                                                     class="img-responsive">
+                                    </div>
+                                    <div>
+                                        <!-- Add any text details like uploader name later -->
+                                        <a href="$link" download="$name">Click to download the file</a>
+                                    </div>
+                                </div>
+t;
+											}
+										} else {
+											echo <<< t
+                                <div class="panel panel-default" style="width: 100%">
+                                    <div class="panel-body">
+                                        <!-- Add any text details like uploader name later -->
+                                        <p>No files available do upload.</p>
+                                    </div>
+                                </div>
+t;
+										}
 									}
-									$sql    = "select * from `file_info` WHERE `note_id` = '$id' ORDER BY `time` ASC ";
+								} else {
+									$sql    = "select * from `file_info` WHERE `name` like  '%" . $_GET['srch-term'] . "%' AND `user_id` = '$user_id' ORDER BY `time` ASC ";
+									echo $sql;
 									$result = mysqli_query( $DB, $sql );
 									if ( $result ) {
 										while ( $row = mysqli_fetch_array( $result ) ) {
@@ -181,15 +214,6 @@ t;
                                 </div>
 t;
 									}
-								} else {
-									echo <<< t
-                                <div class="panel panel-default" style="width: 100%">
-                                    <div class="panel-body">
-                                        <!-- Add any text details like uploader name later -->
-                                        <p>No files available do upload.</p>
-                                    </div>
-                                </div>
-t;
 								}
 
 								?>

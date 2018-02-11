@@ -13,7 +13,7 @@ if (mysqli_connect_errno()) {
 $domain = "http://myschool.askyourfriend.in/";
 $salt = "fidhbfn9J((jPCinISNOkinknvapin0f9fnoXVnVP0EINFqnalcap0mc-MC0MSPD0qej";
 
-//session_start();
+session_start();
 
 $isLoggedIn = isset($_SESSION['sessionID']);
 

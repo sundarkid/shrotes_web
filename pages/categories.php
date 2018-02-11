@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 
 <?php
-require_once 'commons.php';
 session_start();
-if(!isset($_SESSION['sessionID']))
-    header("Location: logout.php");
+require_once 'commons.php';
+if ( ! isset( $_SESSION['sessionID'] ) ) {
+	header( "Location: logout.php" );
+}
 ?>
 <html lang="en">
 <head>
@@ -49,7 +50,7 @@ if(!isset($_SESSION['sessionID']))
 
                 <ul class="nav">
                     <li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i
-                                class="glyphicon glyphicon-chevron-right"></i></a></li>
+                                    class="glyphicon glyphicon-chevron-right"></i></a></li>
                 </ul>
 
                 <ul class="nav hidden-xs" id="lg-menu">
@@ -91,20 +92,21 @@ if(!isset($_SESSION['sessionID']))
 
                                 <div class="input-group-btn">
                                     <button class="btn btn-default" type="submit"><i
-                                            class="glyphicon glyphicon-search"></i></button>
+                                                class="glyphicon glyphicon-search"></i></button>
                                 </div>
                             </div>
+
                         </form>
                         <ul class="nav navbar-nav">
                             <li>
                                 <a href="#postModal" role="button" data-toggle="modal"><i
-                                        class="glyphicon glyphicon-plus"></i> Create</a>
+                                            class="glyphicon glyphicon-plus"></i> Create</a>
                             </li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
-                                        class="glyphicon glyphicon-user"></i></a>
+                                            class="glyphicon glyphicon-user"></i></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="logout.php">Logout</a></li>
                                 </ul>
@@ -129,53 +131,28 @@ if(!isset($_SESSION['sessionID']))
                                         <p class="lead">Subjects</p>
 
                                         <p>Select a Subject from the list to find the topics</p>
-                                        <?php
-                                        /**
-                                         * Created by PhpStorm.
-                                         * User: root
-                                         * Date: 11/14/15
-                                         * Time: 5:44 PM
-                                         */
+										<?php
+										/**
+										 * Created by PhpStorm.
+										 * User: root
+										 * Date: 11/14/15
+										 * Time: 5:44 PM
+										 */
 
-                                        require "databaseAndFunctions.php";
-                                        
-                                        if(!isset($_GET['srch-term'])){
-                                            $sql = "select * from `category_info` ORDER BY `category_name` ASC ";
+										require "databaseAndFunctions.php";
 
-                                            $result = mysqli_query($DB, $sql);
-                                            if ($result) {
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $id = $row['category_id'];
-                                                    $name = $row['category_name'];
-                                                    $link = "./topics.php?cat_id=$id";
+										if ( ! isset( $_GET['srch-term'] ) ) {
+											$sql = "select * from `category_info` WHERE `user_id` = '$user_id' ORDER BY `category_name` ASC ";
 
-
-                                                    echo <<< t
-
-                                            <form action="topics.php" method="post">
-                                                <input type="hidden" value="$id" name="cat_id">
-                                                <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
-                                            </form>
-t;
-
-                                                }
-
-                                            } else {
-
-                                                echo "<p>No categories available please create one.</p>";
-                                            }
-                                        }else{
-                                            $sql = "select * from `category_info` where `category_name` like  '%".$_GET['srch-term']."%' or `description` like '%".$_GET['srch-term']."%' ORDER BY `category_name` ASC";
-
-                                            $result = mysqli_query($DB, $sql);
-                                            if ($result) {
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $id = $row['category_id'];
-                                                    $name = $row['category_name'];
-                                                    $link = "./topics.php?cat_id=$id";
+											$result = mysqli_query( $DB, $sql );
+											if ( $result ) {
+												while ( $row = mysqli_fetch_array( $result ) ) {
+													$id   = $row['category_id'];
+													$name = $row['category_name'];
+													$link = "./topics.php?cat_id=$id";
 
 
-                                                    echo <<< t
+													echo <<< t
 
                                             <form action="topics.php" method="post">
                                                 <input type="hidden" value="$id" name="cat_id">
@@ -183,12 +160,38 @@ t;
                                             </form>
 t;
 
-                                                }
-                                            } else {
-                                                echo "<p>No categories available please create one.</p>";
-                                            }
-                                        }
-                                        ?>
+												}
+
+											} else {
+
+												echo "<p>No categories available please create one.</p>";
+											}
+										} else {
+											$sql = "select * from `category_info` where `category_name` like  '%" . $_GET['srch-term'] . "%' or `description` like '%" . $_GET['srch-term'] . "%' AND `user_id` = '$user_id' ORDER BY `category_name` ASC";
+//											echo $sql;
+
+											$result = mysqli_query( $DB, $sql );
+											if ( $result ) {
+												while ( $row = mysqli_fetch_array( $result ) ) {
+													$id   = $row['category_id'];
+													$name = $row['category_name'];
+													$link = "./topics.php?cat_id=$id";
+
+
+													echo <<< t
+
+                                            <form action="topics.php" method="post">
+                                                <input type="hidden" value="$id" name="cat_id">
+                                                <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
+                                            </form>
+t;
+
+												}
+											} else {
+												echo "<p>No categories available please create one.</p>";
+											}
+										}
+										?>
 
                                         <p>
                                         </p>
@@ -223,17 +226,19 @@ t;
                         <div class="form-group">
                         <textarea name="name" id="title" class="form-control input-lg" autofocus=""
                                   placeholder="Name your category."></textarea>
-                        <textarea name="description" id="describe" class="form-control input-lg" autofocus=""
-                                  placeholder="Describe about it."></textarea>
-                        <textarea name="institution" id="insti" class="form-control input-lg" autofocus=""
-                                  placeholder="Your institution name."></textarea>
+                            <textarea name="description" id="describe" class="form-control input-lg" autofocus=""
+                                      placeholder="Describe about it."></textarea>
+                            <textarea name="institution" id="insti" class="form-control input-lg" autofocus=""
+                                      placeholder="Your institution name."></textarea>
                         </div>
                     </form>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <div>
-                        <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true" onclick="submitForm();">Create</button>
+                        <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true"
+                                onclick="submitForm();">Create
+                        </button>
                         </ul>
                     </div>
                 </div>

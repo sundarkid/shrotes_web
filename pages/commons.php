@@ -7,4 +7,5 @@
  */
 
 error_reporting(0);
+$user_id = $_SESSION["userId"];
 ?>

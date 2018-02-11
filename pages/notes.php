@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 
 <?php
-//require_once 'commons.php';
 session_start();
-if(!isset($_SESSION['sessionID']))
-    header("Location: logout.php");
+require_once 'commons.php';
+if ( ! isset( $_SESSION['sessionID'] ) ) {
+	header( "Location: logout.php" );
+}
 ?>
 
 <html lang="en">
@@ -47,7 +48,7 @@ if(!isset($_SESSION['sessionID']))
 
                 <ul class="nav">
                     <li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i
-                                class="glyphicon glyphicon-chevron-right"></i></a></li>
+                                    class="glyphicon glyphicon-chevron-right"></i></a></li>
                 </ul>
 
                 <ul class="nav hidden-xs" id="lg-menu">
@@ -89,20 +90,20 @@ if(!isset($_SESSION['sessionID']))
 
                                 <div class="input-group-btn">
                                     <button class="btn btn-default" type="submit"><i
-                                            class="glyphicon glyphicon-search"></i></button>
+                                                class="glyphicon glyphicon-search"></i></button>
                                 </div>
                             </div>
                         </form>
                         <ul class="nav navbar-nav">
                             <li>
                                 <a href="#postModal" role="button" data-toggle="modal"><i
-                                        class="glyphicon glyphicon-plus"></i> Create</a>
+                                            class="glyphicon glyphicon-plus"></i> Create</a>
                             </li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
-                                        class="glyphicon glyphicon-user"></i></a>
+                                            class="glyphicon glyphicon-user"></i></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="logout.php">Logout</a></li>
 
@@ -125,64 +126,87 @@ if(!isset($_SESSION['sessionID']))
                                 <div class="panel panel-default" style="width: 100%">
                                     <div class="panel-body">
                                         <p class="lead">Notes</p>
-                                        <?php
-                                        /**
-                                         * Created by PhpStorm.
-                                         * User: root
-                                         * Date: 11/14/15
-                                         * Time: 6:23 PM
-                                         */
+										<?php
+										/**
+										 * Created by PhpStorm.
+										 * User: root
+										 * Date: 11/14/15
+										 * Time: 6:23 PM
+										 */
 
-                                        require "databaseAndFunctions.php";
-                                        if (isset($_POST['topic_id']) || isset($_SESSION['last_post']['topic_id'])) {
-                                            if (isset($_POST['topic_id'])){
-                                                $_SESSION['last_post'] = $_POST;
-                                            $id = $_SESSION['last_post']['topic_id'];}
-                                            else{
-                                                $id = $_SESSION['last_post']['topic_id'];
-                                            }
-                                            $sql = "select * from `note_info` WHERE `topic` = '$id' ORDER BY `title` ASC ";
-                                            $result = mysqli_query($DB, $sql);
-                                            if ($result) {
-                                                echo "<p>Select a Note from the list below.</p>";
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $id = $row['note_id'];
-                                                    $name = $row['title'];
-                                                    $link = "./notes.php?id=$id";
-                                                    echo <<< t
+										require "databaseAndFunctions.php";
+										if ( ! isset( $_GET['srch-term'] ) ) {
+											if ( isset( $_POST['topic_id'] ) || isset( $_SESSION['last_post']['topic_id'] ) ) {
+												if ( isset( $_POST['topic_id'] ) ) {
+													$_SESSION['last_post'] = $_POST;
+													$id                    = $_SESSION['last_post']['topic_id'];
+												} else {
+													$id = $_SESSION['last_post']['topic_id'];
+												}
+												$sql    = "select * from `note_info` WHERE `topic` = '$id' AND `user_id` = '$user_id'  ORDER BY `title` ASC ";
+												$result = mysqli_query( $DB, $sql );
+												if ( $result ) {
+													echo "<p>Select a Note from the list below.</p>";
+													while ( $row = mysqli_fetch_array( $result ) ) {
+														$id   = $row['note_id'];
+														$name = $row['title'];
+														$link = "./notes.php?id=$id";
+														echo <<< t
                                         <form action="notefiles.php" method="post">
                                             <input type="hidden" value="$id" name="note_id">
                                             <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
                                         </form>
 t;
-                                                }
-                                            } else {
+													}
+												} else {
 
-                                                echo "<p>No Notes available please create one.</p>";
-                                            }
-                                        } else {
-                                            $sql = "select * from `note_info` ORDER BY `title` ASC ";
-                                            $result = mysqli_query($DB, $sql);
-                                            if ($result) {
-                                                echo "<p>Select any Note from the list below.</p>";
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $id = $row['note_id'];
-                                                    $name = $row['title'];
-                                                    $link = "./notes.php/?id=$id";
-                                                    echo <<< t
+													echo "<p>No Notes available please create one.</p>";
+												}
+											} else {
+												$sql    = "select * from `note_info` WHERE `user_id` = '$user_id' ORDER BY `title` ASC ";
+												$result = mysqli_query( $DB, $sql );
+												if ( $result ) {
+													echo "<p>Select any Note from the list below.</p>";
+													while ( $row = mysqli_fetch_array( $result ) ) {
+														$id   = $row['note_id'];
+														$name = $row['title'];
+														$link = "./notes.php/?id=$id";
+														echo <<< t
                                         <form action="notefiles.php" method="post">
                                             <input type="hidden" value="$id" name="note_id">
                                             <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
                                         </form>
 t;
-                                                }
-                                            } else {
+													}
+												} else {
 
-                                                echo "<p>No Notes available please create one.</p>";
-                                            }
-                                        }
+													echo "<p>No Notes available please create one.</p>";
+												}
+											}
+										} else {
+											$sql    = "select * from `note_info` WHERE  `title` like  '%" . $_GET['srch-term'] . "%' or `description` like '%" . $_GET['srch-term'] . "%'  AND `user_id` = '$user_id'  ORDER BY `title` ASC ";
+//											echo $sql;
+											$result = mysqli_query( $DB, $sql );
+											if ( $result ) {
+												echo "<p>Select a Note from the list below.</p>";
+												while ( $row = mysqli_fetch_array( $result ) ) {
+													$id   = $row['note_id'];
+													$name = $row['title'];
+													$link = "./notes.php?id=$id";
+													echo <<< t
+                                        <form action="notefiles.php" method="post">
+                                            <input type="hidden" value="$id" name="note_id">
+                                            <input type="submit" value="$name" style="font-size: medium; border: hidden; background: transparent;" onfocus="background-color: #ADADAD">
+                                        </form>
+t;
+												}
+											} else {
 
-                                        ?>
+												echo "<p>No Notes available please create one.</p>";
+											}
+										}
+
+										?>
 
 
                                     </div>
@@ -211,7 +235,7 @@ t;
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >X</button>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
                 Create Notes
             </div>
             <div class="modal-body">
@@ -222,19 +246,22 @@ t;
                         <textarea name="description" id="describe" class="form-control input-lg" autofocus=""
                                   placeholder="Describe about the title."></textarea>
                         <input type="hidden" name="topic_id" value="<?php
-                        if (isset($_POST['topic_id']))
-                            echo $_POST['topic_id'];
-                        else if (isset($_SESSION['last_post']['topic_id']))
-                            echo $_SESSION['last_post']['topic_id'];
-                        else
-                            echo 0;
-                        ?>">
+						if ( isset( $_POST['topic_id'] ) ) {
+							echo $_POST['topic_id'];
+						} else if ( isset( $_SESSION['last_post']['topic_id'] ) ) {
+							echo $_SESSION['last_post']['topic_id'];
+						} else {
+							echo 0;
+						}
+						?>">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <div>
-                    <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true" onclick="submitForm();">Create</button>
+                    <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true"
+                            onclick="submitForm();">Create
+                    </button>
                 </div>
             </div>
         </div>
